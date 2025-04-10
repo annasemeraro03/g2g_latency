@@ -1,43 +1,50 @@
+/*
+  Progetto: Misurazione della latenza con ESP32 e fototransistor
+  Autore: Anna Semeraro
+  Data: 10/04/2025
+  Versione: 1.0
+  Descrizione: Codice Arduino per ESP32 per misurare la latenza utilizzando un fototransistor, i cui dati vengono pubblicati su un broker MQTT
+
+*/
+
+// Librerie
 #include <WiFi.h>
 #include <PubSubClient.h>
 
+// Configurazione dei pin
 #define PHOTO_SENSOR_PIN 34   // Pin a cui è collegato il fototransistor
 #define RED_LED 14            // Pin del LED rosso
 
 // Configurazione della rete WiFi
-const char* ssid = "TIM-55279956";  // Sostituisci con il tuo SSID
-const char* password = "TUf3huU6bYkskCk9C3xHEAAY";  // Sostituisci con la tua password WiFi
+const char* ssid = "rete_wifi";  // Sostituisci con il tuo SSID
+const char* password = "password";  // Sostituisci con la tua password WiFi
 
 // Configurazione del Broker MQTT
-const char* mqtt_server = "test.mosquitto.org";  // Puoi usare un broker pubblico come hivemq o mosquitto
+const char* mqtt_server = "test.mosquitto.org";  // broker mqtt pubblico
 const char* mqtt_topic = "arduino/latency";  // Topic dove inviare i dati
 
+// Inizializzazione del client WiFi e del client MQTT
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-unsigned long ledOnTimestamp = 0;
+unsigned long ledOnTimestamp = 0; // Variabile per memorizzare il timestamp quando il LED è acceso
+const int PHOTO_SENSOR_THRESHOLD_VALUE = 900;   // Soglia per il fototransistor (valore da calibrare in base al circuito)
 
-// Soglia per il fototransistor (valore da calibrare in base al circuito) --> che soglia tengo?
-const int PHOTO_SENSOR_THRESHOLD_VALUE = 900;
-
-void setup() {
-  Serial.begin(9600);
-  
-  pinMode(RED_LED, OUTPUT);
-
-  // Connessione alla rete WiFi
+// Funzione per connettersi alla rete WiFi
+void connectToWiFi() {
+  Serial.print("Connessione alla rete WiFi ");
+  Serial.println(ssid);
   WiFi.begin(ssid, password);
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
-    Serial.println("Connessione WiFi...");
+    Serial.print(".");
   }
-  Serial.println("WiFi connesso");
-
-  client.setServer(mqtt_server, 1883);  // Impostiamo il broker MQTT
-  Serial.println("Broker MQTT impostato");
+  Serial.println(" connesso");
 }
 
-void reconnect() {
+// Funzione per la riconnessione al broker MQTT
+void reconnectToMQTT() {
   while (!client.connected()) {
     if (client.connect("ESP32_Client")) {
       Serial.println("Connesso al broker MQTT");
@@ -48,31 +55,43 @@ void reconnect() {
   }
 }
 
+void setup() {
+  Serial.begin(9600);
+  
+  pinMode(RED_LED, OUTPUT);
+
+  connectToWiFi();                              // Connessione alla rete WiFi
+
+  client.setServer(mqtt_server, 1883);          // set del broker MQTT
+  Serial.println("Broker MQTT impostato");
+}
+
+
 void loop() {
-  digitalWrite(RED_LED, HIGH);
-  ledOnTimestamp = micros();
+  digitalWrite(RED_LED, HIGH);  // Accensione led rosso
+  ledOnTimestamp = micros();    // Timestamp quando il LED è acceso
 
-  int photoSensorValue = analogRead(PHOTO_SENSOR_PIN);  // Leggi il valore del fototransistor
+   
+  int photoSensorValue = analogRead(PHOTO_SENSOR_PIN);      // Lettura del valore del fototransistor
+  Serial.println("Valore del fototransistor: " + String(photoSensorValue));
 
+  // Confronto valore phototransistor con threshold (soglia)
   if (photoSensorValue > PHOTO_SENSOR_THRESHOLD_VALUE) {
-    unsigned long latency = micros() - ledOnTimestamp;  // Calcola la latenza
-
-    // Converte la latenza in formato stringa
-    String latencyStr = String(latency);
+    unsigned long latency = micros() - ledOnTimestamp;      // Calcolo latenza
 
     // Stampa delle latenza su seriale
-    Serial.println("Latency: " + latencyStr + " µs");
-    Serial.println("Valore del fototransistor: " + String(photoSensorValue));
+    Serial.println("Latency: " + String(latency) + " µs");
 
-    
+    // Controllo della connessione al broker MQTT
     if (!client.connected()) {
-      reconnect();
+      reconnectToMQTT();
     }
-    // Pubblica il dato MQTT
-    client.publish(mqtt_topic, latencyStr.c_str());
-    Serial.println("Dati pubblicati su MQTT: " + latencyStr);
 
-    digitalWrite(RED_LED, LOW);  // Spegne il LED rosso
-    delay(1000);                 // Aspetta 1 secondo prima della prossima lettura
+    // Pubblicazione del dato MQTT
+    client.publish(mqtt_topic, String(latency).c_str()); // Pubblica la latenza in microsecondi
+    Serial.println("Dati pubblicati su MQTT: " + String(latency) + " µs");
+
+    digitalWrite(RED_LED, LOW);  // Spegnimento LED rosso
   }
+  delay(1000);                   // Attesa di 1 secondo prima della prossima lettura
 }

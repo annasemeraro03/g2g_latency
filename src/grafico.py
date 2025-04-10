@@ -1,13 +1,20 @@
+# Nome file: grafico.py
+# Autore: Anna Semeraro
+# Data: 10/04/2025
+# 
+# Descrizione: Questo script si connette a un broker MQTT e riceve messaggi di latenza da un topic specifico; inoltre, visualizza
+#              i dati in un grafico in tempo reale utilizzando Matplotlib.
+
+# Librerie
 import paho.mqtt.client as mqtt
 import matplotlib.pyplot as plt
 from datetime import datetime
-
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-# Configura i dettagli del broker MQTT
-mqtt_broker = "test.mosquitto.org"  # Usa lo stesso broker MQTT di Arduino
-mqtt_topic = "arduino/latency"  # Il topic su cui Arduino invia i dati
+# Configurazione del broker MQTT
+mqtt_broker = "test.mosquitto.org"  
+mqtt_topic = "arduino/latency" 
 mqtt_port = 1883
 
 # Dati per il grafico
