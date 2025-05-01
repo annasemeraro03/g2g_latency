@@ -1,70 +1,75 @@
 /*
-  Progetto: Misurazione della latenza con ESP32 e fototransistor
-  Autore: Anna Semeraro
-  Data: 28/04/2025
-  Versione: 1.1
-  Descrizione: Codice Arduino per ESP32 per misurare la latenza utilizzando un fototransistor
+  Project: Measurement of the latency with ESP32 and phototransistor 
+  Author: Anna Semeraro
+  Description: Arduino code for ESP32 to measure latency using a phototransistor
 
 */
 
-// Librerie
+// libraries
 #include <Arduino.h>
 
-// Configurazione dei pin
-#define PHOTO_SENSOR_PIN 34   // Pin a cui è collegato il fototransistor
-#define RED_LED 14            // Pin del LED rosso
+// configuration of the pins
+#define PHOTO_SENSOR_PIN 34   // pin to which the phototransistor is connected
+#define RED_LED 14            // pin to which the red LED is connected
 
-unsigned long ledOnTimestamp = 0;                             // Variabile per memorizzare il timestamp quando il LED è acceso
-unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = calibration();   // Soglia per il fototransistor (valore da calibrare in base al circuito)
+// variables
+unsigned long ledOnTimestamp = 0;                             // variable to store the timestamp when the LED is on
+unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 0;               // threshold for the phototransistor (value to be calibrated based on the circuit)
 
-const int LEN_VECTOR = 10; // Lunghezza del vettore per la calibrazione
+const int LEN_VECTOR = 10;                                    // length of the vector for calibration
 
 unsigned long calibration(){
   unsigned long photo_calibration_vec[LEN_VECTOR];
   unsigned long sum = 0;
   int valid_samples = 0;
 
-
+  // reading values from the phototransistor for calibration
   for(int i=0; i<LEN_VECTOR; i++){
-      photo_calibration_vec[i] = analogRead(PHOTO_SENSOR_PIN);
-      delayMicroseconds(90);
+    photo_calibration_vec[i] = analogRead(PHOTO_SENSOR_PIN);
+    delayMicroseconds(90);
   }
 
+  // sum of all phototransistor readings to determine the average threshold
   for(int i=0; i<LEN_VECTOR; i++){
       // if reading 0 = max light, so shift all data to one
       photo_calibration_vec[i] += 1;
-      if (sum + photo_calibration_vec[i] < sum) {  // Overflow check
+      if (sum + photo_calibration_vec[i] < sum) {   // overflow check
           Serial.println("Overflow detected!");
-          return 0;  // Handle overflow case
+          return 0;                                 // handle overflow case
       }
       sum += photo_calibration_vec[i];
   }
 
-  //hope this cast the operation 
   unsigned long threshold = sum / LEN_VECTOR;
 
   return threshold;
-  
 }
 
 void setup() {
   Serial.begin(9600);
   pinMode(RED_LED, OUTPUT);
+  PHOTO_SENSOR_THRESHOLD_VALUE = calibration(); // calibration of the phototransistor
+  if(PHOTO_SENSOR_THRESHOLD_VALUE == 0) {
+    Serial.println("calibration failed");
+    exit(1);                                    // exit if calibration fails
+  } else {
+    Serial.println("phototransistor threshold: " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
+  }
+
 }
 
 void loop() { 
   delay(1000);
-  digitalWrite(RED_LED, HIGH);  // Accensione led rosso
-  ledOnTimestamp = micros();    // Timestamp quando il LED è acceso
+  digitalWrite(RED_LED, HIGH);  // turn on red LED 
+  ledOnTimestamp = micros();    // timestamp when the LED is on 
    
-  int photoSensorValue = analogRead(34);      // Lettura del valore del fototransistor
-  Serial.println("Valore del fototransistor: " + String(photoSensorValue));
+  int photoSensorValue = analogRead(34);      // reading the value of the phototransistor
+  Serial.println("value of the phototransistor: " + String(photoSensorValue));
 
-  // Confronto valore phototransistor con threshold (soglia)
+  // compare phototransistor value with threshold to check if the LED is on
   if (photoSensorValue > PHOTO_SENSOR_THRESHOLD_VALUE) {
-    unsigned long latency = micros() - ledOnTimestamp;      // Calcolo latenza
+    unsigned long latency = micros() - ledOnTimestamp;      // latency calculation
 
-    // Stampa delle latenza su seriale
     Serial.println("Latency: " + String(latency) + " µs");
   }
   delay(1000);
