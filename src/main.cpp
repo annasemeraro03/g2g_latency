@@ -25,6 +25,12 @@ unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 0;               // threshold for t
 
 const int LEN_VECTOR = 10;                                    // length of the vector for calibration
 
+/**
+ * @brief Function to calibrate the phototransistor threshold value
+ * @param None
+ * @return unsigned long - threshold value for the phototransistor
+ * 
+ */
 unsigned long calibration(){
   unsigned long photo_calibration_vec[LEN_VECTOR];
   unsigned long sum = 0;
@@ -52,19 +58,32 @@ unsigned long calibration(){
   return threshold;
 }
 
+/**
+ * @brief Function to setup the ESP32
+ * @param None
+ * @return None
+ * 
+ */
 void setup() {
   Serial.begin(9600);
   pinMode(RED_LED, OUTPUT);
-  // PHOTO_SENSOR_THRESHOLD_VALUE = calibration(); // calibration of the phototransistor
-  // if(PHOTO_SENSOR_THRESHOLD_VALUE == 0) {
-  //   Serial.println("calibration failed");
-  //   exit(1);                                    // exit if calibration fails
-  // } else {
-  //   Serial.println("phototransistor threshold: " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
-  // }
+  PHOTO_SENSOR_THRESHOLD_VALUE = calibration(); // calibration of the phototransistor
+  Serial.println(PHOTO_SENSOR_THRESHOLD_VALUE);
+  if(PHOTO_SENSOR_THRESHOLD_VALUE == 0) {
+    Serial.println("calibration failed");
+    exit(1);                                    // exit if calibration fails
+  } else {
+    Serial.println("phototransistor threshold: " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
+  }
 
 }
 
+/**
+ * @brief Function to loop the ESP32
+ * @param None
+ * @return None
+ * 
+ */
 void loop() { 
   int photoSensorValue;
   #ifdef HIGH_MEASUREMENT
