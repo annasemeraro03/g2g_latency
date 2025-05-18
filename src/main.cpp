@@ -14,6 +14,12 @@
 // variables
 unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 0;               // threshold for the phototransistor (value to be calibrated based on the circuit)
 
+/**
+ * @brief Function to calculate the average light level from the phototransistor
+ *        when the LED is turned on or off.
+ * @param ledState: true to turn on the LED, false to turn it off
+ * @return unsigned long: average light level
+ */
 unsigned long calcolateThreshold(bool ledState) {
   const int SAMPLE_COUNT = 50; // Number of samples to collect
   unsigned long sum = 0;       // Variable to store the sum of samples
@@ -102,8 +108,8 @@ void loop() {
   int photoSensorValue;                   // value of the phototransistor
   unsigned long detectionTimestamp = 0;   // timestamp when the phototransistor detects the light of the LED 
   
-  digitalWrite(RED_LED, HIGH); // Turn on the LED
-  unsigned long ledOnTimestamp = micros();   // Store the timestamp when the LED is turned on
+  digitalWrite(RED_LED, HIGH);                // Turn on the LED
+  unsigned long ledOnTimestamp = micros();    // Store the timestamp when the LED is turned on
 
   while(true){
     photoSensorValue = analogRead(PHOTO_SENSOR_PIN);      // Read the value of the phototransistor
