@@ -1,59 +1,73 @@
-phototransistor value where led = on: 317
-phototransistor value where led = off: 1007
-phototransistor value where led = on: 68
-phototransistor value where led = off: 821
-phototransistor value where led = on: 129
-phototransistor value where led = off: 619
-phototransistor value where led = on: 97
-phototransistor value where led = on: 317
-phototransistor value where led = off: 1007
-phototransistor value where led = on: 68
-phototransistor value where led = off: 821
-phototransistor value where led = on: 129
-phototransistor value where led = on: 317
-phototransistor value where led = off: 1007
-phototransistor value where led = on: 68
-phototransistor value where led = off: 821
-phototransistor value where led = on: 317
-phototransistor value where led = off: 1007
-phototransistor value where led = on: 68
-phototransistor value where led = on: 317
-phototransistor value where led = off: 1007
-phototransistor value where led = on: 317
-phototransistor value where led = on: 317
-phototransistor value where led = off: 1007
-phototransistor value where led = on: 68
-phototransistor value where led = off: 821
-phototransistor value where led = on: 129
-phototransistor value where led = off: 619
-phototransistor value where led = on: 97
-phototransistor value where led = off: 550
-
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-phototransistor value where led = off: 0
-
-phototransistor value where led = on: 579
-phototransistor value where led = on: 583
-phototransistor value where led = on: 534
-phototransistor value where led = on: 110
-phototransistor value where led = on: 722
-phototransistor value where led = on: 439
-phototransistor value where led = on: 582
-phototransistor value where led = on: 150
-phototransistor value where led = on: 439
-phototransistor value where led = on: 432
-phototransistor value where led = on: 832
-phototransistor value where led = on: 412
-phototransistor value where led = on: 469
+=========Starting calibration=========
+Ambient light average: 64
+LED light average: 23
+=========Calibration complete=========
+Error: LED light not detected clearly. Check your wiring or circuit.
+0
+Calibration failed
+abort() was called at PC 0x400df30b on core 1
+Backtrace: 0x4008344d:0x3ffb2130 0x400880e1:0x3ffb2150 0x4008cf1d:0x3ffb2170 0x400df30b:0x3ffb21f0 0x400e4ff7:0x3ffb2210 0x400d1735:0x3ffb2230 0x400d3b8a:0x3ffb2290
+ELF file SHA256: e29b8128f93b6729
+Rebooting...
+Phototransistor value: 146
+Latency: 181 탎
+Phototransistor value: 69
+Latency: 509 탎
+Phototransistor value: 100
+Latency: 345 탎
+Phototransistor value: 85
+Latency: 1008 탎
+Phototransistor value: 23
+Latency: 1254 탎
+Phototransistor value: 240
+Latency: 1090 탎
+Phototransistor value: 113
+Latency: 1254 탎
+Phototransistor value: 48
+Latency: 836 탎
+Phototransistor value: 217
+Latency: 1008 탎
+Phototransistor value: 117
+Latency: 1253 탎
+Phototransistor value: 358
+Latency: 1008 탎
+Phototransistor value: 134
+Latency: 1418 탎
+Phototransistor value: 64
+Latency: 918 탎
+Phototransistor value: 133
+Latency: 1090 탎
+Phototransistor value: 69
+Latency: 1171 탎
+Phototransistor value: 46
+Latency: 1663 탎
+Phototransistor value: 224
+Latency: 918 탎
+Phototransistor value: 52
+Latency: 1172 탎
+Phototransistor value: 48
+Latency: 1499 탎
+Phototransistor value: 150
+Latency: 590 탎
+Phototransistor value: 80
+Latency: 345 탎
+Phototransistor value: 29
+Latency: 427 탎
+Phototransistor value: 56
+Latency: 754 탎
+Phototransistor value: 70
+Latency: 263 탎
+Phototransistor value: 31
+Latency: 99 탎
+Phototransistor value: 134
+Latency: 1336 탎
+Phototransistor value: 46
+Latency: 99 탎
+Phototransistor value: 49
+Latency: 1008 탎
+Phototransistor value: 54
+Latency: 918 탎
+Phototransistor value: 79
+Latency: 1172 탎
+Phototransistor value: 240
+Latency: 836 탎
