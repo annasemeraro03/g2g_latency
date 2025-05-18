@@ -4,20 +4,12 @@
   Description: Arduino code for ESP32 to measure latency using a phototransistor
 */
 
-// TODO:
-// 1. Modify the function to calibrate the phototransistor threshold value
-// 2. Add a function to measure the latency 
-// 3. Add a function to measures the value of the phototransistor and print the value
-
 // libraries
 #include <Arduino.h>
 
 // configuration of the pins
 #define PHOTO_SENSOR_PIN 34   // pin to which the phototransistor is connected
 #define RED_LED 14            // pin to which the red LED is connected
-
-#define LOW_MEASUREMENT true
-#define HIGH_MEASUREMENT false
 
 // variables
 unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 0;               // threshold for the phototransistor (value to be calibrated based on the circuit)
@@ -51,13 +43,13 @@ unsigned long calcolateThreshold(bool ledState) {
  * @brief Calibrates the phototransistor to determine a reliable threshold 
  *        for detecting when the red LED is turned on.
  * 
- * @return unsigned long - the calculated threshold value
+ * @return None
  */
-unsigned long calibratePhototransistorThreshold() {
+void calibratePhototransistorThreshold() {
   unsigned long sumAmbient = 0;
   int sample;
 
-  Serial.println("=========Starting calibration...=========");
+  Serial.println("=========Starting calibration=========");
 
   // Calculate the average ambient light level
   unsigned long avgAmbient = calcolateThreshold(false); // Call the function to get the average with LED off
@@ -75,13 +67,11 @@ unsigned long calibratePhototransistorThreshold() {
   // Safety check: make sure the LED was detected
   if (avgWithLed <= avgAmbient) {
     Serial.println("Error: LED light not detected clearly. Check your wiring or circuit.");
-    return 0;
+    return;
   }
 
   // Set the threshold between ambient and LED levels (80% toward LED reading)
-  unsigned long threshold = avgAmbient + ((avgWithLed - avgAmbient) * 0.8);
-
-  return threshold;
+  PHOTO_SENSOR_THRESHOLD_VALUE = avgAmbient + ((avgWithLed - avgAmbient) * 0.8);
 }
 
 
@@ -93,13 +83,13 @@ unsigned long calibratePhototransistorThreshold() {
 void setup() {
   Serial.begin(9600);
   pinMode(RED_LED, OUTPUT);
-  PHOTO_SENSOR_THRESHOLD_VALUE = calibratePhototransistorThreshold(); // calibration of the phototransistor
+  calibratePhototransistorThreshold(); // calibration of the phototransistor
   Serial.println(PHOTO_SENSOR_THRESHOLD_VALUE);
   if(PHOTO_SENSOR_THRESHOLD_VALUE == 0) {
-    Serial.println("calibration failed");
+    Serial.println("Calibration failed");
     exit(1);                                    // exit if calibration fails
   } else {
-    Serial.println("phototransistor threshold: " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
+    Serial.println("Phototransistor threshold: " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
   }
 }
 
@@ -109,37 +99,26 @@ void setup() {
  * @return None
  */
 void loop() { 
-  int photoSensorValue;                   // variable to store the value of the phototransistor
-  unsigned long detectionTimestamp = 0;   // variable to store the timestamp when the phototransistor detects the light of the LED 
-  unsigned long ledOnTimestamp = 0;       // variable to store the timestamp when the LED is on
+  int photoSensorValue;                   // value of the phototransistor
+  unsigned long detectionTimestamp = 0;   // timestamp when the phototransistor detects the light of the LED 
   
-  #ifdef HIGH_MEASUREMENT
-  digitalWrite(RED_LED, HIGH);  // turn on red LED 
-  ledOnTimestamp = micros();    // timestamp when the LED is on 
-  while (true) {
-    photoSensorValue = analogRead(PHOTO_SENSOR_PIN);
-    if (photoSensorValue > PHOTO_SENSOR_THRESHOLD_VALUE) {
-      detectionTimestamp = micros();  // timestamp when the phototransistor detects the light of the LED
-      break;                         
+  digitalWrite(RED_LED, HIGH); // Turn on the LED
+  unsigned long ledOnTimestamp = micros();   // Store the timestamp when the LED is turned on
+
+  while(true){
+    photoSensorValue = analogRead(PHOTO_SENSOR_PIN);      // Read the value of the phototransistor
+    if(photoSensorValue > PHOTO_SENSOR_THRESHOLD_VALUE) { // Check if the phototransistor detects the light of the LED
+      detectionTimestamp = micros();  // Store the timestamp when the phototransistor detects the light of the LED
+      break;                          // Exit the loop when the light is detected
     }
-    delay(100);  // delay to allow the phototransistor to stabilize
-  }
-  Serial.println("phototransistor value where led = on: " + String(photoSensorValue));
-  delay(500);
-  #endif
-
-  // compare phototransistor value with threshold to check if the LED is on
-  if (photoSensorValue > PHOTO_SENSOR_THRESHOLD_VALUE) {
-    unsigned long latency = detectionTimestamp - ledOnTimestamp;      // latency calculation
-    Serial.println("Latency: " + String(latency) + " µs");
   }
 
-  #ifdef LOW_MEASUREMENT
-  delay(500);
-  digitalWrite(RED_LED, LOW);  // Spegnimento LED rosso
+  unsigned long latency = detectionTimestamp - ledOnTimestamp;   // calculation of the latency
 
-  photoSensorValue = analogRead(34);      // reading the value of the phototransistor
-  Serial.println("phototransistor value where led = off: " + String(photoSensorValue));
-  delay(500);
-  #endif
+  // Print the results
+  Serial.println("Phototransistor value: " + String(photoSensorValue));
+  Serial.println("Latency: " + String(latency) + " µs\n");
+
+  digitalWrite(RED_LED, LOW);   // Turn off the LED
+  delay(1000);                  // Wait for 1 second before the next iteration
 }
