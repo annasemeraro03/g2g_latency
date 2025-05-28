@@ -125,6 +125,11 @@ void loop() {
       detectionTimestamp = micros();  // Store the timestamp when the phototransistor detects the light of the LED
       break;                          // Exit the loop when the light is detected
     }
+    // Check for timeout condition
+    if(micros() - ledOnTimestamp > 1000000) {   // Timeout after 1 seconds
+      DEBUG_PRINTLN("Timeout: LED not detected within 1 seconds.");
+      return;                                   // Exit the loop if the LED is not detected within 1 seconds
+    }
   }
 
   unsigned long latency = detectionTimestamp - ledOnTimestamp;   // calculation of the latency
