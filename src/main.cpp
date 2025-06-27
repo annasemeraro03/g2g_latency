@@ -11,7 +11,7 @@
 #define PHOTO_SENSOR_PIN 34   // pin to which the phototransistor is connected
 #define RED_LED 14            // pin to which the red LED is connected
 
-//#define DEBUG true            // enable or disable debug messages
+// #define DEBUG true            // enable or disable debug messages
 // debug messages
 #if DEBUG
   #define DEBUG_PRINT(x) Serial.print(x)
