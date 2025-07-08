@@ -11,6 +11,16 @@
 #define PHOTO_SENSOR_PIN 34   // pin to which the phototransistor is connected
 #define RED_LED 14            // pin to which the red LED is connected
 
+#define DEBUG true            // enable or disable debug messages
+// debug messages
+#if DEBUG
+  #define DEBUG_PRINT(x) Serial.print(x)
+  #define DEBUG_PRINTLN(x) Serial.println(x)
+#else
+  #define DEBUG_PRINT(x)
+  #define DEBUG_PRINTLN(x)
+#endif
+
 // variables
 unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 0;               // threshold for the phototransistor (value to be calibrated based on the circuit)
 
@@ -51,35 +61,34 @@ unsigned long calcolateThreshold(bool ledState) {
  * 
  * @return None
  */
-void calibratePhototransistorThreshold() {
+void photodiodeCalibration() {
   unsigned long sumAmbient = 0;
   int sample;
 
-  Serial.println("=========Starting calibration=========");
+  DEBUG_PRINTLN("=========Starting calibration=========");
 
   // Calculate the average ambient light level
   unsigned long avgAmbient = calcolateThreshold(false); // Call the function to get the average with LED off
-  Serial.println("Ambient light average: " + String(avgAmbient));
+  DEBUG_PRINTLN("Ambient light average: " + String(avgAmbient));
 
   unsigned long avgWithLed = calcolateThreshold(true); // Call the function to get the average with LED on
-  Serial.println("LED light average: " + String(avgWithLed));
+  DEBUG_PRINTLN("LED light average: " + String(avgWithLed));
 
   // Turn off the LED after calibration
   digitalWrite(RED_LED, LOW);
 
   // Debug info
-  Serial.println("=========Calibration complete=========");
+  DEBUG_PRINTLN("=========Calibration complete=========");
 
   // Safety check: make sure the LED was detected
   if (avgWithLed <= avgAmbient) {
-    Serial.println("Error: LED light not detected clearly. Check your wiring or circuit.");
+    DEBUG_PRINTLN("Error: LED light not detected clearly. Check your wiring or circuit.");
     return;
   }
 
   // Set the threshold between ambient and LED levels (80% toward LED reading)
   PHOTO_SENSOR_THRESHOLD_VALUE = avgAmbient + ((avgWithLed - avgAmbient) * 0.8);
 }
-
 
 /**
  * @brief Function to setup the ESP32
@@ -89,13 +98,12 @@ void calibratePhototransistorThreshold() {
 void setup() {
   Serial.begin(9600);
   pinMode(RED_LED, OUTPUT);
-  calibratePhototransistorThreshold(); // calibration of the phototransistor
-  Serial.println(PHOTO_SENSOR_THRESHOLD_VALUE);
+  photodiodeCalibration(); // calibration of the phototransistor
   if(PHOTO_SENSOR_THRESHOLD_VALUE == 0) {
-    Serial.println("Calibration failed");
+    DEBUG_PRINTLN("500: calibration failed - threshold value is 0");
     exit(1);                                    // exit if calibration fails
   } else {
-    Serial.println("Phototransistor threshold: " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
+    DEBUG_PRINTLN("200: calibration succeded - value = " + String(PHOTO_SENSOR_THRESHOLD_VALUE));
   }
 }
 
@@ -117,14 +125,18 @@ void loop() {
       detectionTimestamp = micros();  // Store the timestamp when the phototransistor detects the light of the LED
       break;                          // Exit the loop when the light is detected
     }
+    // Check for timeout condition
+    if(micros() - ledOnTimestamp > 1000000) {   // Timeout after 1 seconds
+      DEBUG_PRINTLN("Timeout: LED not detected within 1 seconds.");
+      return;                                   // Exit the loop if the LED is not detected within 1 seconds
+    }
   }
 
   unsigned long latency = detectionTimestamp - ledOnTimestamp;   // calculation of the latency
 
   // Print the results
-  Serial.println("Phototransistor value: " + String(photoSensorValue));
-  Serial.println("Latency: " + String(latency) + " µs\n");
+  Serial.print(String(photoSensorValue) + "," + String(latency) + "\n");
 
   digitalWrite(RED_LED, LOW);   // Turn off the LED
-  delay(1000);                  // Wait for 1 second before the next iteration
+  delay(1500);                  // Wait for 1.5 second before the next iteration
 }
