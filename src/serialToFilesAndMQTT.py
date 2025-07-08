@@ -1,9 +1,7 @@
-# filename: collectDataFromSerial.py
+# filename: serialToFilesAndMQTT.py
 # author: Anna Semeraro
-# data: 17/05/2025
 #
-# Description: script that collects data from a serial port, saves it to a file,
-# and (optionally) publishes it over MQTT.
+# Description: script that collects data from a serial port, saves it to a file and (optionally) publishes it over MQTT.
 
 import serial, time, os
 import paho.mqtt.client as mqtt
