@@ -11,7 +11,7 @@
 #define PHOTO_SENSOR_PIN 34   // pin to which the phototransistor is connected
 #define RED_LED 14            // pin to which the red LED is connected
 
-// #define DEBUG true            // enable or disable debug messages
+#define DEBUG true            // enable or disable debug messages
 // debug messages
 #if DEBUG
   #define DEBUG_PRINT(x) Serial.print(x)
@@ -61,7 +61,7 @@ unsigned long calcolateThreshold(bool ledState) {
  * 
  * @return None
  */
-void calibratePhototransistorThreshold() {
+void photodiodeCalibration() {
   unsigned long sumAmbient = 0;
   int sample;
 
@@ -98,7 +98,7 @@ void calibratePhototransistorThreshold() {
 void setup() {
   Serial.begin(9600);
   pinMode(RED_LED, OUTPUT);
-  calibratePhototransistorThreshold(); // calibration of the phototransistor
+  photodiodeCalibration(); // calibration of the phototransistor
   if(PHOTO_SENSOR_THRESHOLD_VALUE == 0) {
     DEBUG_PRINTLN("500: calibration failed - threshold value is 0");
     exit(1);                                    // exit if calibration fails
@@ -138,5 +138,5 @@ void loop() {
   Serial.print(String(photoSensorValue) + "," + String(latency) + "\n");
 
   digitalWrite(RED_LED, LOW);   // Turn off the LED
-  delay(1000);                  // Wait for 1 second before the next iteration
+  delay(1500);                  // Wait for 1.5 second before the next iteration
 }
