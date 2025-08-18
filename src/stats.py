@@ -37,8 +37,8 @@ def print_statistics(values, device_name="", test=""):
         f.write(f"{device_name},{test},{average},{minimum},{maximum}\n")
 
 if __name__ == "__main__":
-    device_name = "Stonkam" 
-    # file_csv = os.path.join(os.getcwd(), 'src', 'files', f'{device_name}_videomode_latency.csv')
-    file_csv = os.path.join(os.getcwd(), 'src', 'realTime_files', f'{device_name}_latency2_27062025.csv')
+    device_name = "iPhone15Pro" 
+    file_csv = os.path.join(os.getcwd(), 'src', 'files', f'{device_name}_photomode_latency.csv')
+    # file_csv = os.path.join(os.getcwd(), 'src', 'realTime_files', f'{device_name}_latency2_27062025.csv')
     values = read_values_from_csv(file_csv)
     print_statistics(values, device_name, "Test4")
