@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # === Folders ===
-FILES_FOLDER = os.path.join(os.getcwd(), 'src', 'files')
+FILES_FOLDER = os.path.join(os.getcwd(), 'src', 'files_devices_redLed')
 STATS_FOLDER = os.path.join(os.getcwd(), 'src', 'statistics')
 
 # === Set True the type of graph you want to visualize ===
@@ -18,8 +18,10 @@ SHOW_VIOLIN = True
 # === SCATTER PLOT ===
 # === === ===
 
+fs = 20
+
 if SHOW_SCATTER:
-    device = "SamsungGalaxyJ6"
+    device = "iPod"
     files_to_plot = [
         f"{device}_videomode_latency.csv",
         f"{device}_photomode_latency.csv"
@@ -36,17 +38,18 @@ if SHOW_SCATTER:
         df = pd.read_csv(filepath, header=None)
         x = np.arange(len(df))
         y = df.iloc[:, -1].to_numpy() / 1000  # Da us a ms
-
+        
+        plt.tick_params(axis='both', which='major', labelsize=fs-5)
+        
         plt.scatter(
             x, y,
-            label=filename.replace(f"{device}_", "").replace('_', ' ').replace('.csv', ''),
+            label=filename.replace(f"{device}_", "").replace('_', ' ').replace('.csv', '').replace('photomode', 'Preview mode').replace('videomode', 'Recording mode'),
             s=10
         )
 
-    plt.xlabel('Sample Index')
-    plt.ylabel('Latency (ms)')
-    plt.title(f'Latency Scatter Plot - {device}')
-    plt.legend(fontsize='small', loc='upper right')
+    plt.xlabel('Sample Index', fontsize=fs)
+    plt.ylabel('Latency (ms)', fontsize=fs)
+    plt.legend(fontsize=15, loc='upper right')
     plt.tight_layout()
     plt.show()
 
@@ -55,7 +58,7 @@ if SHOW_SCATTER:
 # === === ===
 
 elif SHOW_HISTOGRAM:
-    filename = 'photoStatistics.csv'
+    filename = 'videoStatistics.csv'
     filepath = os.path.join(STATS_FOLDER, filename)
 
     if not os.path.isfile(filepath):
@@ -67,9 +70,9 @@ elif SHOW_HISTOGRAM:
 
         plt.figure(figsize=(10, 6))
         plt.bar(devices, data, color='skyblue')
-        plt.xlabel('Device')
-        plt.ylabel('Latency (ms)')
-        plt.title('Average Latency per Device - Photomode')
+        plt.xlabel('Device', fontsize=fs)
+        plt.ylabel('Latency (ms)', fontsize=fs)
+        plt.tick_params(axis='both', which='major', labelsize=fs-7)
         plt.xticks(rotation=45, ha='right')
         plt.tight_layout()
         plt.show()
@@ -93,23 +96,27 @@ elif SHOW_CANDLESTICK:
         mins = df['Min'] / 1000
         maxs = df['Max'] / 1000
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(6, 6))  # figura più stretta
 
         x = np.arange(len(devices))
         cmap = plt.get_cmap('tab10')
         colors = [cmap(i % cmap.N) for i in range(len(devices))]
 
+        # Candlestick
         for i in range(len(devices)):
-            ax.vlines(x[i], mins[i], maxs[i], color=colors[i], linewidth=2)
+            ax.vlines(x[i], mins[i], maxs[i], color=colors[i], linewidth=4)
 
+        # Media
         ax.scatter(x, means, color='black', marker='s', s=80, label='Average')
-
+        
+        # Assi
         ax.set_xticks(x)
         ax.set_xticklabels(devices, rotation=45, ha='right')
-        ax.set_ylabel('Latency (ms)')
-        ax.set_title('Min / Max / Average Latency - Photomode')
-
-        ax.legend()
+        ax.set_xlim(-0.5, len(devices)-0.5)  # rimuove spazio extra ai lati
+        ax.legend(fontsize=fs-5, loc='upper right')
+        plt.xlabel('Device', fontsize=fs-5)
+        plt.ylabel('Latency (ms)', fontsize=fs-5)
+        plt.tick_params(axis='both', which='major', labelsize=fs-8)
         plt.tight_layout()
         plt.show()
 
@@ -128,7 +135,7 @@ elif SHOW_VIOLIN:
         "SonyPSVita"
     ]
 
-    mode = "photomode"
+    mode = "videomode"
     data = []
     labels = []
 
@@ -154,7 +161,6 @@ elif SHOW_VIOLIN:
         palette=palette
     )
 
-    
     unique_devices = sorted(set(labels), key=labels.index)
     for i, device in enumerate(unique_devices):
         latencies = [d for d, l in zip(data, labels) if l == device]
@@ -167,11 +173,10 @@ elif SHOW_VIOLIN:
             plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='black', markersize=8, label='Average')
         )
         legend_labels.append('Average')
-    ax.legend(handles, legend_labels)
-
-    ax.set_xlabel("Device")
-    ax.set_ylabel("Latency (ms)")
-    ax.set_title(f"Latency Distribution per Device - {mode.capitalize()}")
+    ax.legend(handles, legend_labels, fontsize=fs-5)
+    plt.tick_params(axis='both', which='major', labelsize=fs-5)
+    plt.xlabel('Device', fontsize=fs)
+    plt.ylabel('Latency (ms)', fontsize=fs)
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.show()

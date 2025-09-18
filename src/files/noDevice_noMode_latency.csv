@@ -1,0 +1,76 @@
+=========Starting calibration=========
+Ambient light average: 0
+LED light average: 86
+=========Calibration complete=========
+200: calibration succeded - value = 68
+86,310
+82,1533
+233,113
+240,113
+167,113
+90,114
+75,17918
+239,113
+258,113
+149,113
+80,18030
+139,113
+185,113
+=========Starting calibration=========
+Ambient light average: 317
+LED light average: 0
+=========Calibration complete=========
+Error: LED light not detected clearly. Check your wiring or circuit.
+500: calibration failed - threshold value is 0
+abort() was called at PC 0x400df2b3 on core 1
+Backtrace: 0x4008344d:0x3ffb2130 0x400880e1:0x3ffb2150 0x4008cf1d:0x3ffb2170 0x400df2b3:0x3ffb21f0 0x400e4f9f:0x3ffb2210 0x400d1729:0x3ffb2230 0x400d3b32:0x3ffb2290
+ELF file SHA256: 62e77b4d7f030abb
+Rebooting...
+106,12436
+144,114
+64,18113
+174,114
+144,114
+71,18021
+217,114
+117,114
+86,18113
+260,114
+206,114
+80,17823
+219,114
+166,114
+60,18124
+145,114
+225,114
+224,114
+267,114
+111,114
+69,114
+64,18021
+229,114
+272,113
+380,114
+189,114
+141,114
+63,114
+=========Starting calibration=========
+Ambient light average: 0
+LED light average: 0
+=========Calibration complete=========
+Error: LED light not detected clearly. Check your wiring or circuit.
+500: calibration failed - threshold value is 0
+abort() was called at PC 0x400df2b3 on core 1
+Backtrace: 0x4008344d:0x3ffb2130 0x400880e1:0x3ffb2150 0x4008cf1d:0x3ffb2170 0x400df2b3:0x3ffb21f0 0x400e4f9f:0x3ffb2210 0x400d1729:0x3ffb2230 0x400d3b32:0x3ffb2290
+ELF file SHA256: 62e77b4d7f030abb
+Rebooting...
+=========Starting calibration=========
+Ambient light average: 89
+LED light average: 56
+=========Calibration complete=========
+Error: LED light not detected clearly. Check your wiring or circuit.
+500: calibration failed - threshold value is 0
+abort() was called at PC 0x400df2b3 on core 1
+Backtrace: 0x4008344d:0x3ffb2130 0x400880e1:0x3ffb2150 0x4008cf1d:0x3ffb2170 0x400df2b3:0x3ffb21f0 0x400e4f9f:0x3ffb2210 0x400d1729:0x3ffb2230 0x400d3b32:0x3ffb2290
+ELF file SHA256: 62e77b4d7f030abb
+Rebooting...

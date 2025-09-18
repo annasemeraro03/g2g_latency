@@ -12,21 +12,27 @@ STATS_FOLDER = os.path.join(os.getcwd(), 'src', 'statistics')
 # === Set True the type of graph you want to visualize ===
 SHOW_SCATTER = False
 SHOW_HISTOGRAM = False
-SHOW_CANDLESTICK = True
-SHOW_VIOLIN = False 
+SHOW_CANDLESTICK = False
+SHOW_VIOLIN = True 
 
 # === === ===
 # === SCATTER PLOT ===
 # === === ===
 
+fs = 20
+
 if SHOW_SCATTER:
-    device = "cameraRaspberry"
+    device = "Stonkam"
     files_to_plot = [
         f"{device}_latency_24062025.csv",
         f"{device}_latency2_24062025.csv",
+        f"{device}_latency_27062025.csv",
+        f"{device}_latency2_27062025.csv",
     ]
 
     plt.figure(figsize=(12, 6))
+
+    test = 1
 
     for filename in files_to_plot:
         filepath = os.path.join(FILES_FOLDER, filename)
@@ -40,14 +46,16 @@ if SHOW_SCATTER:
 
         plt.scatter(
             x, y,
-            label=filename.replace(f"{device}_", "").replace('_', ' ').replace('.csv', ''),
+            label="Test " + str(test),
             s=10
         )
+        
+        test += 1
 
-    plt.xlabel('Sample Index')
-    plt.ylabel('Latency (ms)')
-    plt.title(f'Latency Scatter Plot - {device}')
-    plt.legend(fontsize='small', loc='upper right')
+    plt.tick_params(axis='both', which='major', labelsize=fs-5)
+    plt.xlabel('Sample Index', fontsize=fs)
+    plt.ylabel('Latency (ms)', fontsize = fs)
+    plt.legend(fontsize=fs-5, loc='upper right')
     plt.tight_layout()
     plt.show()
 
@@ -156,7 +164,7 @@ elif SHOW_VIOLIN:
         device = file.split('_')[0]
         device_counts.setdefault(device, 0)
         device_counts[device] += 1
-        device_label = f"{device} test {device_counts[device]}"
+        device_label = f"{device.replace('camera','')} Test {device_counts[device]}"
 
         source = file.replace('.csv', '')
 
@@ -191,11 +199,11 @@ elif SHOW_VIOLIN:
             mean = latencies.mean()
             ax.scatter(xticks[i], mean, color='black', marker='o', s=40, zorder=10)
 
-    ax.set_xlabel("Device")
-    ax.set_ylabel("Latency (ms)")
-    ax.set_title("Latency Distribution per Device")
+    plt.tick_params(axis='both', which='major', labelsize=fs-5)
+    plt.xlabel('Device', fontsize=fs)
+    plt.ylabel('Latency (ms)', fontsize = fs)
     plt.xticks(rotation=45, ha='right')
     # Solo la legenda custom in alto a destra, dentro il grafico
-    ax.legend(handles=legend_elements, loc='upper right', title=None)
+    ax.legend(fontsize=fs-5, handles=legend_elements, loc='upper right', title=None)
     plt.tight_layout()
     plt.show()

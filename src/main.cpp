@@ -22,7 +22,7 @@
 #endif
 
 // variables
-unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 0;               // threshold for the phototransistor (value to be calibrated based on the circuit)
+unsigned long PHOTO_SENSOR_THRESHOLD_VALUE = 100;               // threshold for the phototransistor (value to be calibrated based on the circuit)
 
 /**
  * @brief Function to calculate the average light level from the phototransistor
